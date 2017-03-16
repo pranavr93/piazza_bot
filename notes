@@ -1,0 +1,33 @@
+1. Index all the piazza posts in a local index (some ideas - whoosh, elastic search, lucene)
+2. Given a new post
+	-	If there is already a student or instructor answer, skip the question
+	-	Take the subject and body of the question separately 
+	-	Subject gives a rough topic of the question
+	-	Body gives the more specific form of the question
+	-	Take into account the folder/label of the questoin
+	-	Overall, 3 features
+		-	Subject
+		-	Body
+		-	Label
+
+
+Top questions of the week
+-	Only those questions that have an instructor/student answer qualify
+-	Weighting Features
+	-	Should be a public post
+	-	Length of the question (we don't want long questions to feature)
+	-	Length of the answer (we don't want long answers to feature)
+	-	Lot of 'good question' votes (more the better)
+	-	Lot of 'thanks' recevied for the instructor answer (more the better)
+	-	# of unique people invovled in the post (more the better)
+	-	'Instructor thinks this is a good quesiton' (boolean, good to have)
+	-	Professor involved in the question (rather than just instructors) (good to have)
+	-	Repeat questions with @<question#> (lot of students have the question, so should go in FAQ)
+	-	Number of views on the question
+
+
+Bulk fetch and incremental updates
+-	First time jarvis bot runs, it fetches all content (marks them as read along the way)
+-	Along the way, it also marks the posts as read
+-	Incremental update happens through the filter "update" to get only those posts that have changed since you last read them
+-	This way, we can keep the local index up-to-date
