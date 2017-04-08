@@ -1,5 +1,10 @@
+appdirs==1.4.3
 jsim==1.2
+packaging==16.8
 piazza-api==0.5.2
 py==1.4.27
+pyparsing==2.2.0
 pytest==2.7.1
 requests==2.7.0
+six==1.10.0
+Whoosh==2.7.4
