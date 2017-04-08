@@ -3,7 +3,7 @@ import json
 import sys
 import config
 
-def download_piazza():
+def get_all_posts():
 	POST_LIMIT = 100000000
 
 	p = Piazza()
@@ -14,6 +14,6 @@ def download_piazza():
 	documents = []
 	posts = course.iter_all_posts(limit= POST_LIMIT)
 	for post in posts:
-	    documents.append(post["history"][0]["content"])
+	    documents.append(post)
 
 	return documents
