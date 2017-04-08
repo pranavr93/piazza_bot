@@ -3,19 +3,17 @@ import json
 import sys
 import config
 
-p = Piazza()
-p.user_login(config.creds['email'], config.creds['password'])
+def download_piazza():
+	POST_LIMIT = 100000000
 
-course = p.network(config.class_code)
+	p = Piazza()
+	p.user_login(config.creds['email'], config.creds['password'])
 
-mapSave = {}
+	course = p.network(config.class_code)
 
-posts = course.iter_all_posts(limit=100000000000)
-for post in posts:
-    content = post["history"][0]["content"]
-    id = post["nr"]
-    print(id)
-    mapSave[id] = content
+	documents = []
+	posts = course.iter_all_posts(limit= POST_LIMIT)
+	for post in posts:
+	    documents.append(post["history"][0]["content"])
 
-with open("posts_test.json", "wb") as f:
-    f.write(json.dumps(mapSave))
+	return documents
