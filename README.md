@@ -4,6 +4,7 @@ Piazza bot that indexes all posts and enables quick searches on them
 ## Usage
 
 ```
+git clone https://github.com/pranavr93/piazza_bot.git
 cd piazza_bot/
 virtualenv venv
 source venv/bin/activate
