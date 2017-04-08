@@ -4,29 +4,43 @@ import os.path
 import config
 from whoosh.qparser import QueryParser
 import sys
+import download
+import shutil
 
 class Index:
     def __init__(self):
-
         # define schema for the index
-        schema = Schema(Name=TEXT(stored=True), age=NUMERIC(stored=True), id=ID(stored=True), description=TEXT(stored=True))
-
+        schema = self.get_schema()
         try:
             self.ix = open_dir(config.index_directory)
             self.update_index()
         except:
             # if issues loading index, create index from scratch
-            shutil.rmtree(config.index_directory)
+            if os.path.exists(config.index_directory):
+                shutil.rmtree(config.index_directory)
             os.mkdir(config.index_directory)
             self.ix = create_in(config.index_directory, schema)
             self.create_index()
             
+    # tentative schema, can add more indices to this
+    def get_schema(self):
+        # build index on post and subject; not storing them
+        # store raw json in 'json' field
+        return Schema(post=TEXT, subject=TEXT, json=STORED)
+
+    def post_to_document(self, document):
+        return  { 
+                    'post': document['history'][0]['content'],
+                    'subject': document['history'][0]['subject'],
+                    'json': document
+                } 
+
     # create index from scratch
     def create_index(self):
-        
         writer = self.ix.writer()
-        writer.add_document(Name=u"Pranav Ramarao", age=u"25", id=u"2011a7ps013h", description=u"he is a computer science student")
-        writer.add_document(Name=u"Vishaal Mohan", age=u"23", id=u"2011aaps006h", description=u"he is an electrical student")                        
+        for document in download.get_all_posts():
+            dict = self.post_to_document(document)
+            writer.add_document(**dict)
         writer.commit()
 
     # incremental update to index
@@ -38,7 +52,7 @@ class Index:
         all_results = []
         with self.ix.searcher() as searcher:
             for word in query.split(' '):
-                query = QueryParser("description", self.ix.schema).parse(word)
+                query = QueryParser('post', self.ix.schema).parse(word)
                 results = searcher.search(query)
                 all_results.extend(results)
 
