@@ -4,13 +4,14 @@ import os.path
 import config
 from whoosh.qparser import QueryParser
 import sys
-import download
+from bot import Bot
 import shutil
 
 class Index:
     def __init__(self):
         # define schema for the index
         schema = self.get_schema()
+        self.bot = Bot()
         try:
             self.ix = open_dir(config.index_directory)
             self.update_index()
@@ -38,10 +39,11 @@ class Index:
     # create index from scratch
     def create_index(self):
         writer = self.ix.writer()
-        for document in download.get_all_posts():
+        for document in self.bot.get_all_posts():
             dict = self.post_to_document(document)
             writer.add_document(**dict)
         writer.commit()
+        print('\n-----------index created-----------\n\n')
 
     # incremental update to index
     def update_index(self):
@@ -49,6 +51,7 @@ class Index:
 
     # search for query terms in the description
     def search(self, query):
+        print('searching \'{0}\'...'.format(query))
         all_results = []
         with self.ix.searcher() as searcher:
             for word in query.split(' '):
