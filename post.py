@@ -1,3 +1,4 @@
+from dateutil import parser
 class Post:
     def __init__(self, json):
         try:
@@ -8,9 +9,11 @@ class Post:
             self.views = json['unique_views']
             self.good_question = json['is_tag_good']
             self.is_anon = json['default_anonymity']
-            self.created = json['created']
+            self.created = parser.parse(json['created'])
             self.upvotes = len(json['upvote_ids'])
             self.no_answer = json['no_answer']
+            self.json = json    # in case something else is required
+            self.follow_ups = len(json['children'])  # number of follow up questions posted 
         except:
             print('could not convert post id {0} to object'.format(self.id))
 
