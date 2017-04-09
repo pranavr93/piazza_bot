@@ -3,17 +3,18 @@ import json
 import sys
 import config
 
-def get_all_posts():
-	POST_LIMIT = 100000000
+class Bot:
+    def __init__(self):
+        self.piazza = Piazza()
+        self.piazza.user_login(config.creds['email'], config.creds['password'])
+        self.course = self.piazza.network(config.class_code)
 
-	p = Piazza()
-	p.user_login(config.creds['email'], config.creds['password'])
+    def get_all_posts(self):
+        documents = []
+        posts = self.course.iter_all_posts()
+        for post in posts:
+            print('downloading post {0}'.format(post['nr']))
+            documents.append(post)
+        return documents
 
-	course = p.network(config.class_code)
 
-	documents = []
-	posts = course.iter_all_posts(limit= POST_LIMIT)
-	for post in posts:
-	    documents.append(post)
-
-	return documents
