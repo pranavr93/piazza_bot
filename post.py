@@ -1,18 +1,18 @@
 class Post:
-	def __init__(self, json):
-		try:
-			self.folders = json['folders']
-			self.body = json['history'][0]['content']
-			self.subject = json['history'][0]['subject']
-			self.id = json['nr']
-			self.views = json['unique_views']
-			self.good_question = json['is_tag_good']
-			self.is_anon = json['default_anonymity']
-			self.created = json['created']
-			self.upvotes = len(json['upvote_ids'])
-			self.no_answer = json['no_answer']
-		except:
-			print('could not convert post id {0} to object'.format(self.id))
+    def __init__(self, json):
+        try:
+            self.folders = json['folders']
+            self.body = json['history'][0]['content']
+            self.subject = json['history'][0]['subject']
+            self.id = json['nr']
+            self.views = json['unique_views']
+            self.good_question = json['is_tag_good']
+            self.is_anon = json['default_anonymity']
+            self.created = json['created']
+            self.upvotes = len(json['upvote_ids'])
+            self.no_answer = json['no_answer']
+        except:
+            print('could not convert post id {0} to object'.format(self.id))
 
 
 # bookmarked          : 2
