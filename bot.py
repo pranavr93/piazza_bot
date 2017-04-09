@@ -16,5 +16,3 @@ class Bot:
             print('downloading post {0}'.format(post['nr']))
             documents.append(post)
         return documents
-
-
