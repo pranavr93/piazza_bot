@@ -7,13 +7,37 @@ class Post:
             self.subject = json['history'][0]['subject']
             self.id = json['nr']
             self.views = json['unique_views']
-            self.good_question = json['is_tag_good']
             self.is_anon = json['default_anonymity']
             self.created = parser.parse(json['created'])
-            self.upvotes = len(json['upvote_ids'])
             self.no_answer = json['no_answer']
-            self.json = json    # in case something else is required
+
             self.follow_ups = len(json['children'])  # number of follow up questions posted 
+
+            self.good_question_tally = len(json['tag_good'])
+            self.good_question_ta_tally = sum(1 for x in json['tag_good'] if x['admin'] == True)
+
+            self.has_i_answer = False
+            self.has_s_answer = False
+
+            self.good_student_answer_tally = 0  # total good answer upvotes on student answer
+            self.good_student_answer_ta_tally = 0  # total good answer upvotes on student answer by a TA
+            
+            self.good_instructor_answer_tally = 0   # total good answer upvotes on TA answer
+            self.good_instructor_answer_ta_tally = 0    # total good answer upvotes on TA answer by other TAs
+
+            # count the above tallies
+            for child in json['children']:
+                if child['type'] == 'i_answer':
+                    self.has_i_answer = True
+                    self.good_instructor_answer_tally = len(child['tag_endorse'])
+                    self.good_instructor_answer_ta_tally = sum(1 for x in child['tag_endorse'] if x['admin'] == True)
+
+                if child['type'] == 's_answer':
+                    self.has_s_answer = True
+                    self.good_student_answer_tally = len(child['tag_endorse'])
+                    self.good_student_answer_ta_tally = sum(1 for x in child['tag_endorse'] if x['admin'] == True)
+
+            self.json = json    # in case something else is required
         except:
             print('could not convert post id {0} to object'.format(self.id))
 
