@@ -4,11 +4,12 @@ from whoosh.fields import *
 from whoosh.query import *
 import os.path
 import config
-
 import sys
 from bot import Bot
 import shutil
 from dateutil import parser
+from post import Post
+# deals with fetching/storing/searching data in the index
 class Index:
     def __init__(self):
         # define schema for the index
@@ -29,15 +30,22 @@ class Index:
     def get_schema(self):
         # build index on post and subject; not storing them
         # store raw json in 'json' field
-        return Schema(subject=TEXT, body=TEXT, date=DATETIME, json=STORED, views=NUMERIC)
+        return Schema(
+                    subject=TEXT,
+                    body=TEXT,
+                    date=DATETIME,
+                    json=STORED,
+                    views=NUMERIC,
+                    upvotes=NUMERIC(sortable=True)
+                    )
 
     def post_to_document(self, document):
         return  { 
-                    'body': document['history'][0]['content'],
-                    'subject': document['history'][0]['subject'],
-                    'date': parser.parse(document['created']),
-                    'json': document,
-                    'views': int(document['unique_views'])
+                    'subject': document.subject,
+                    'body': document.body,
+                    'date': document.date,
+                    'json': document.json,
+                    'views': document.views,
                 } 
 
     # create index from scratch
@@ -54,50 +62,53 @@ class Index:
         pass
 
     # search for query terms in the description
-    def search(self, query):
+    def search(self, query, limit, sort_by_field=None):
         print(query)
         ret_list = []
         ret_list = []
         with self.ix.searcher() as searcher:
-            results = searcher.search(query)
+            if sort_by_field == None:
+                results = searcher.search(query, limit=limit)
+            else:
+                results = searcher.search(query, limit=limit, sortedby=sort_by_field, reverse=True)
             for result in results:
-                ret_list.append(dict(result))
+                ret_list.append(Post(result['json']))
         return ret_list
 
     # get all posts with field having query terms
-    def search_terms(self, field, query_terms):
+    def search_terms(self, field, query_terms, limit=1000):
         print('searching \'{0}\'...'.format(query_terms))
         all_results = []
         for word in query_terms.split():
             query = Term(field, word)
-            all_results.extend(self.search(query))
+            all_results.extend(self.search(query, limit))
         return all_results
 
     # get all posts with field between low and high
-    def search_numeric(self, field, low, high):
-        query = NumericRange(field, low, up)
-        return self.search(query)
+    def search_numeric(self, field, low, high, limit=1000):
+        query = NumericRange(field, low, high)
+        return self.search(query, limit, field)
 
     # get all posts between dates start_date and end_date
-    def search_date(self, field, start_date, end_date):
+    def search_date(self, field, start_date, end_date, limit=1000):
         query = DateRange(field, start_date, end_date)
-        return self.search(query)
+        return self.search(query, limit)
 
 
 def main():
     if len(sys.argv) == 1:
-        print('no query terms provided')
-        return
-    query_terms = sys.argv[1:]
-    id = Index()
-    results = id.search_terms('body',' '.join(query_terms))
-    print(len(results))
-    print(results[0])
-    for result in results:
-        print(result)
-        print('\n')
-    if len(results) == 0:
-        print('no search results for the given term')
+        id = Index()
+    else:
+        query_terms = sys.argv[1:]
+        id = Index()
+        results = id.search_terms('body',' '.join(query_terms))
+        #results = id.search_numeric('upvotes',0, 1000, 20)
+        print(len(results))
+        for result in results:
+            print(result)
+            print('\n')
+        if len(results) == 0:
+            print('no search results for the given term')
 
 if __name__ == "__main__":
     main()
