@@ -38,7 +38,8 @@ class Index:
                     body=TEXT,
                     date=DATETIME,
                     json=STORED,
-                    views=NUMERIC
+                    views=NUMERIC,
+                    folders=TEXT
                     )
 
     def post_to_document(self, document):
@@ -49,7 +50,7 @@ class Index:
                     'date': document.date,
                     'json': document.json,
                     'views': document.views,
-
+                    'folders':document.folders
                 } 
 
     # add all documents to the index
@@ -105,6 +106,11 @@ class Index:
     def search_date(self, field, start_date, end_date, limit=INF):
         query = DateRange(field, start_date, end_date)
         return self.search(query, limit)
+
+    def search_folder(self, query_term, limit=INF):
+        query = Term('folders', query_term)
+        all_results = self.search(query, limit)
+        return all_results
 
 def main():
     if len(sys.argv) == 1:
