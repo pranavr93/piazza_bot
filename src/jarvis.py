@@ -17,7 +17,7 @@ class Jarvis:
         start_date = end_date + timedelta(days=-7)
         results = self.index.search_date('date', start_date, end_date, 1000)
         newlist = sorted(results, key=lambda x: x.good_question_tally, reverse=True)
-        newlist2 = [item for item in newlist if len(item.body) < 200 and item.type == 'question' and item.has_i_answer]
+        newlist2 = [item for item in newlist if len(item.body) < 200 and item.is_question and item.has_i_answer]
         top10 = newlist2[:5]
 
         body = '<br>'
