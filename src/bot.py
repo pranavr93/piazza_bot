@@ -8,25 +8,33 @@ from post import Post
 
 from piazza_api.rpc import PiazzaRPC
 
-
+INF = 100000
 
 class Bot:
     def __init__(self):
         self.piazza = Piazza()
         self.piazza.user_login(config.creds['email'], config.creds['password'])
         self.course = self.piazza.network(config.class_code)
-        # self.course = self.piazza.network(config.eecs281)
 
+        # rpc api to post notes
         self.piazza_rpc = PiazzaRPC(config.class_code)
         self.piazza_rpc.user_login(config.creds['email'], config.creds['password'])
 
-    def get_all_posts(self):
+    # get all posts from start_id + 1
+    def get_all_posts(self, start_id=0, limit=INF):
         documents = []
-        posts = self.course.iter_all_posts(limit=100)
-        for post in posts:
-            print('downloading post {0}'.format(post['nr']))
-            documents.append(Post(post))
+        feed = self.course.get_feed()
+        ids = [post['nr'] for post in feed['feed']]
+        for post_id in ids:
+            if post_id > start_id:
+                print('downloading post {0}'.format(post_id))
+                post_json = self.course.get_post(post_id)
+                documents.append(Post(post_json))
+
         return documents
+
+    def get_post(self, id):
+        return Post(self.course.get_post(id))
 
     def create_post(self, subject, body, folder=['hw1']):
         params = {'type':'note','subject':subject, 'content':body, 'folders':folder}
