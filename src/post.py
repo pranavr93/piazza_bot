@@ -7,10 +7,11 @@ class Post:
             self.subject = json['history'][0]['subject']
             self.id = json['nr']
             self.views = json['unique_views']
-            self.is_anon = json['default_anonymity']
+            self.is_private = True if json['status'] == 'private' else False
             self.date = parser.parse(json['created'])
 
-            self.type = json['type']
+            # note: json['type'] takes values 'note', 'question', 'poll'
+            self.is_question = True if json['type'] == 'question' else False
             self.follow_ups = len(json['children'])  # number of follow up questions posted 
 
             self.good_question_tally = len(json['tag_good'])    # total number of good question upvotes for the post
