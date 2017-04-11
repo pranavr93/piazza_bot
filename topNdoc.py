@@ -71,21 +71,28 @@ def find_top_N_similar_docs(input_doc, documents, n):
 	'''
 	#clean the input_doc and documents--> input_doc_clean, doc_clean
 	documents.append(input_doc)
+	#print 'this is documents:',documents
 	doc_clean = clean_docs(documents)
+	#print "cleaned result: ",doc_clean
 	input_doc_clean = doc_clean[-1:]
 	#input_doc_clean.append(input_doc)
 	#doc_clean.extend(input_doc_clean)
 
 	tfidf = TfidfVectorizer().fit_transform(doc_clean)
+	#print tfidf
 	input_vec = tfidf[-1:]
-
+	#print input_vec 
 	from sklearn.metrics.pairwise import linear_kernel
 
 	cosine_similarities = linear_kernel(input_vec, tfidf).flatten()
+	#print cosine_similarities
 	related_docs_indices = cosine_similarities.argsort()[::-1]
+	#print related_docs_indices 
 	if n != 0:
 		top_n_idx = related_docs_indices[1:n+1]
+		#print top_n_idx
 		cosine_score = cosine_similarities[top_n_idx]
+		#print cosine_score
 	res = []
 	res_score = cosine_score.tolist()
 	for i in range(len(top_n_idx)):
@@ -93,3 +100,18 @@ def find_top_N_similar_docs(input_doc, documents, n):
 		res.append(documents[idx])
 	return res, res_score
 	# Calculate TFIDF of all documents
+
+
+'''
+documents = ['are you doing what','piazza','hello','you doing','what are you doing']
+input_doc = 'what are you doing'
+ 
+input_doc = rawTest[0]
+documents = rawTest[1:21]
+doc_clean = []
+
+n = 3
+res,res_score = find_top_N_similar_docs(input_doc, documents, n)
+print res
+print res_score
+'''
