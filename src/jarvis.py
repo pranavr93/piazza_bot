@@ -32,13 +32,31 @@ class Jarvis:
         self.bot.create_post(subject, body)
         print(body)
 
-    def answer_unanswered_questions():
+    def get_search_results(self, query):
+        # assume id_list has the list of ids of all the search results
+        id_list = [6,7]
+        response = ''
+        for item in id_list:
+            response += '&#64;{0} '.format(item)
+        return '<p>Here are some posts matching your queries {0}</p>'.format(response)
+
+    def answer_search_queries(self):
+        search_posts = self.index.search_folder('search')
+        for post in search_posts:
+            if post.has_i_answer: # ignore posts with TA answer
+                print('how')
+                continue
+            search_query = post.subject
+            response = self.get_search_results(search_query)
+            self.bot.create_answer(post.guid, response)
+
+    def answer_unanswered_questions(self):
         pass        
 
 def main():
     jarvis = Jarvis()
-    jarvis.add_top_10_questions()
-    jarvis.answer_unanswered_questions()
+    #jarvis.add_top_10_questions()
+    jarvis.answer_search_queries()
 
 if __name__ == "__main__":
     main()
