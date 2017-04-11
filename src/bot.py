@@ -39,3 +39,7 @@ class Bot:
     def create_post(self, subject, body, folder=['hw1']):
         params = {'type':'note','subject':subject, 'content':body, 'folders':folder}
         self.piazza_rpc.content_create(params)
+
+    def create_answer(self, post_id, content):
+        params = { 'cid': post_id, 'type': 'i_answer', 'content': content, 'revision': 0}
+        return self.piazza_rpc.content_instructor_answer(params)
