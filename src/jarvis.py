@@ -32,9 +32,13 @@ class Jarvis:
         self.bot.create_post(subject, body)
         print(body)
 
+    def answer_unanswered_questions():
+        pass        
+
 def main():
     jarvis = Jarvis()
     jarvis.add_top_10_questions()
+    jarvis.answer_unanswered_questions()
 
 if __name__ == "__main__":
     main()
