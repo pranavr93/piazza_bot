@@ -2,10 +2,11 @@ from dateutil import parser
 class Post:
     def __init__(self, json):
         try:
-            self.folders = json['folders']
+            self.folders = ' '.join(json['folders']).decode('utf-8')
             self.body = json['history'][0]['content']
             self.subject = json['history'][0]['subject']
             self.id = json['nr']
+            self.guid = json['id']
             self.views = json['unique_views']
             self.is_private = True if json['status'] == 'private' else False
             self.date = parser.parse(json['created'])
