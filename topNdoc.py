@@ -46,6 +46,7 @@ def clean_docs(documents):
 	        w = w.lower()
 	        if w not in stopwords.words('english') and w != "":
 	            token_list.append(w)
+	    token_list = stem_tokens(token_list, stemmer)
 	    doc_clean.append(token_list)
 
 	documents_clean = []
@@ -78,12 +79,16 @@ def find_top_N_similar_docs(input_doc, documents, n):
 	#input_doc_clean.append(input_doc)
 	#doc_clean.extend(input_doc_clean)
 
-	tfidf = TfidfVectorizer().fit_transform(doc_clean)
-	#print tfidf
+	#Calculate TDIDF
+	vec = TfidfVectorizer()
+	tfidf = vec.fit_transform(doc_clean)
+	#print tfidf.todense()
+	#print 'vec features are:',vec.get_feature_names()
 	input_vec = tfidf[-1:]
 	#print input_vec 
-	from sklearn.metrics.pairwise import linear_kernel
 
+	#Calculate Similarity
+	from sklearn.metrics.pairwise import linear_kernel
 	cosine_similarities = linear_kernel(input_vec, tfidf).flatten()
 	#print cosine_similarities
 	related_docs_indices = cosine_similarities.argsort()[::-1]
@@ -103,14 +108,25 @@ def find_top_N_similar_docs(input_doc, documents, n):
 
 
 '''
+#Testing params
 documents = ['are you doing what','piazza','hello','you doing','what are you doing']
 input_doc = 'what are you doing'
+ 
+documents = ['oranges are the best food in the wohle wide word',
+             'oranges are very good','piazza is a very good website',
+             'oranges are very good']
+input_doc = 'orange is a fine fruit'
  
 input_doc = rawTest[0]
 documents = rawTest[1:21]
 doc_clean = []
 
-n = 3
+documents = ['oranges are the best fruit in the whole wide word',
+             'oranges are very good','piazza is a very good website',
+             'How you doing oranges']
+input_doc = 'orange is a fine fruit'
+
+n = 5
 res,res_score = find_top_N_similar_docs(input_doc, documents, n)
 print res
 print res_score
