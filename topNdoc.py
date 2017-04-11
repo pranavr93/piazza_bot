@@ -16,12 +16,10 @@ Reference:
 import numpy as np
 import re
 import nltk
-import string
-import os
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
+
 stemmer = PorterStemmer()
 
 def stem_tokens(tokens, stemmer):
@@ -55,6 +53,13 @@ def clean_docs(documents):
 	    documents_clean.append(" ".join(i))
 	return documents_clean 
 
+#Input:
+#	input_doc : a string
+#	documents : a list of string
+#	n : top n similar doc you want to get from documents
+#output:  
+#	res : n most similar docs in a list
+# 	res_score : n corresponding similarity socre.	
 def find_top_N_similar_docs(input_doc, documents, n):
 	#Preprocess each document in list and build a new list of docs
 	'''
@@ -77,12 +82,14 @@ def find_top_N_similar_docs(input_doc, documents, n):
 	from sklearn.metrics.pairwise import linear_kernel
 
 	cosine_similarities = linear_kernel(input_vec, tfidf).flatten()
-	related_docs_indices = cosine_similarities.argsort()
+	related_docs_indices = cosine_similarities.argsort()[::-1]
 	if n != 0:
-		top_n_idx = related_docs_indices[0:n]
+		top_n_idx = related_docs_indices[1:n+1]
 		cosine_score = cosine_similarities[top_n_idx]
 	res = []
-	for i in top_n_idx:
-		res.append(documents[i])
-	return res[1:]
+	res_score = cosine_score.tolist()
+	for i in range(len(top_n_idx)):
+		idx = top_n_idx[i]
+		res.append(documents[idx])
+	return res, res_score
 	# Calculate TFIDF of all documents
