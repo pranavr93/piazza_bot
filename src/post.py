@@ -20,6 +20,7 @@ class Post:
 
             self.has_i_answer = False
             self.has_s_answer = False
+            self.has_answer = False
 
             self.good_student_answer_tally = 0  # total good answer upvotes on student answer
             self.good_student_answer_ta_tally = 0  # total good answer upvotes on student answer by a TA
@@ -44,6 +45,7 @@ class Post:
                     self.good_student_answer_tally = len(child['tag_endorse'])
                     self.good_student_answer_ta_tally = sum(1 for x in child['tag_endorse'] if x['admin'] == True)
 
+            self.has_answer = self.has_i_answer or self.has_s_answer
             self.json = json    # in case something else is required
         except:
             print('could not convert post id {0} to object'.format(self.id))
