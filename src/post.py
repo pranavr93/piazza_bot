@@ -20,7 +20,7 @@ class Post:
 
             self.has_i_answer = False
             self.has_s_answer = False
-            self.has_answer = False
+            self.has_answer = False     # assume answer present for notes/polls
 
             self.good_student_answer_tally = 0  # total good answer upvotes on student answer
             self.good_student_answer_ta_tally = 0  # total good answer upvotes on student answer by a TA

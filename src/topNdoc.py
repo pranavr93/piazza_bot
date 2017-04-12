@@ -34,6 +34,7 @@ def tokenize(text):
     tokens = nltk.word_tokenize(text)
     stems = stem_tokens(tokens, stemmer)
     return stems
+    
 def clean_docs(documents):
     doc_clean = []
     for i in documents:
@@ -76,10 +77,10 @@ def find_top_N_similar_docs(input_post, documents_post, n):
     input_doc = input_post.subject + ' ' + input_post.body 
     documents = [doc.subject + ' ' + doc.body for doc in documents_post]
 
-    #documents.append(input_doc)
+    documents.append(input_doc)
     #print 'this is documents:',documents
     doc_clean = clean_docs(documents)
-    #print "cleaned result: ",doc_clean
+    print "cleaned result: ",doc_clean
     input_doc_clean = doc_clean[-1:]
     #input_doc_clean.append(input_doc)
     #doc_clean.extend(input_doc_clean)
@@ -112,29 +113,20 @@ def find_top_N_similar_docs(input_post, documents_post, n):
 
     return res, res_score
     # Calculate TFIDF of all documents
-
-
 '''
-#Testing params
-documents = ['are you doing what','piazza','hello','you doing','what are you doing']
-input_doc = 'what are you doing'
- 
-documents = ['oranges are the best food in the wohle wide word',
-             'oranges are very good','piazza is a very good website',
-             'oranges are very good']
-input_doc = 'orange is a fine fruit'
- 
-input_doc = rawTest[0]
-documents = rawTest[1:21]
-doc_clean = []
-
-documents = ['oranges are the best fruit in the whole wide word',
-             'oranges are very good','piazza is a very good website',
-             'How you doing oranges']
-input_doc = 'orange is a fine fruit'
-
-n = 5
-res,res_score = find_top_N_similar_docs(input_doc, documents, n)
-print res
-print res_score
+from piazza_api import Piazza
+import json
+import sys
+import config
+from post import Post
+piazza = Piazza()
+piazza.user_login(config.creds['email'], config.creds['password'])
+course = piazza.network(config.class_code)
+post1 = Post(course.get_post(6))
+post2 = Post(course.get_post(41))
+doc_post = []
+doc_post.append(post1)
+doc_post.append(post2)
+input_post = Post(course.get_post(48))
+find_top_N_similar_docs(input_post, doc_post, 2)
 '''
