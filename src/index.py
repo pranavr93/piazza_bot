@@ -39,7 +39,8 @@ class Index:
                     date=DATETIME,
                     json=STORED,
                     views=NUMERIC,
-                    folders=TEXT
+                    folders=TEXT,
+                    has_answer=BOOLEAN
                     )
 
     def post_to_document(self, document):
@@ -50,7 +51,8 @@ class Index:
                     'date': document.date,
                     'json': document.json,
                     'views': document.views,
-                    'folders':document.folders
+                    'folders':document.folders,
+                    'has_answer':document.has_answer
                 } 
 
     # add all documents to the index
@@ -109,6 +111,11 @@ class Index:
 
     def search_folder(self, query_term, limit=INF):
         query = Term('folders', query_term)
+        all_results = self.search(query, limit)
+        return all_results
+
+    def search_unanswered(self, limit=INF):
+        query = Term('has_answer', False)
         all_results = self.search(query, limit)
         return all_results
 
