@@ -73,6 +73,7 @@ def find_top_N_similar_docs(input_post, documents_post, n):
     '''
     #clean the input_doc and documents--> input_doc_clean, doc_clean
     print('finding matches for post {0}'.format(input_post.id))
+    print('There are {0} candidates for the post'.format(len(documents_post)))
     print('candidates for similarity are {0}'.format(str([post.id for post in documents_post])))
     input_doc = input_post.subject + ' ' + input_post.body 
     documents = [doc.subject + ' ' + doc.body for doc in documents_post]
@@ -80,7 +81,7 @@ def find_top_N_similar_docs(input_post, documents_post, n):
     documents.append(input_doc)
     #print 'this is documents:',documents
     doc_clean = clean_docs(documents)
-    print "cleaned result: ",doc_clean
+    #print "cleaned result: ",doc_clean
     input_doc_clean = doc_clean[-1:]
     #input_doc_clean.append(input_doc)
     #doc_clean.extend(input_doc_clean)
@@ -110,7 +111,8 @@ def find_top_N_similar_docs(input_post, documents_post, n):
         idx = top_n_idx[i]
         #res.append(documents[idx])
         res.append(documents_post[idx].id)
-
+    print('printing scores')
+    #print(res, res_score)
     return res, res_score
     # Calculate TFIDF of all documents
 '''
