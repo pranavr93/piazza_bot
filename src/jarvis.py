@@ -31,8 +31,11 @@ class Jarvis:
 
         body += '<br>#pin'
         subject = 'FAQ for the Week'
-        self.bot.create_post(subject, body)
-        print(body)
+        try:
+            self.bot.create_post(subject, body)
+        except:
+            print('FAQ for this week already made')
+        #print(body)
 
     # given a list of ids, it returns html equivalent for @first_item, @second_item..
     def get_at_response(self, id_list):
@@ -80,7 +83,10 @@ class Jarvis:
     # find duplicate questions and link them to similar old ones
     # public method
     def answer_unanswered_questions(self):
-        unanswered_posts = self.index.search_unanswered()
+
+        unanswered_posts = self.index.search_other_unanswered()
+        # the below code looks into same index and finds unanswered questions
+        # unanswered_posts = self.index.search_unanswered()
         for u_post in unanswered_posts:
             if u_post.is_question and 'search' not in u_post.folders:
                 response = self.get_duplicates(u_post)
@@ -90,7 +96,7 @@ class Jarvis:
 
 def main():
     jarvis = Jarvis()
-    #jarvis.add_top_10_questions()
+    jarvis.add_top_10_questions()
     jarvis.answer_unanswered_questions()
 
 if __name__ == "__main__":
