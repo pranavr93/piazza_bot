@@ -4,6 +4,7 @@ from piazza_api import Piazza
 import json
 import sys
 import config
+import os.path
 from post import Post
 
 from piazza_api.rpc import PiazzaRPC
@@ -20,7 +21,25 @@ class Bot:
         self.piazza_rpc = PiazzaRPC(config.class_code)
         self.piazza_rpc.user_login(config.creds['email'], config.creds['password'])
 
-    # get all posts from start_id + 1
+    def get_all_posts_json(self):
+        documents = []
+        posts = []
+        file_name = '{0}.txt'.format(config.class_code)
+        if not os.path.isfile(file_name):
+            data = self.course.iter_all_posts(limit=INF)
+            for post in data:
+                print('downloading post {0}'.format(post['nr']))
+                documents.append(post)
+                posts.append(Post(post))
+            obj = open(file_name, 'wb')
+            json.dump(documents, obj)
+        else:
+            obj = open(file_name, 'r')
+            data = json.load(obj)
+            for post in data:
+                posts.append(Post(post))
+        return posts
+
     def get_all_posts(self, start_id=0, limit=100):
         documents = []
         feed = self.course.get_feed()
