@@ -119,6 +119,15 @@ class Index:
         all_results = self.search(query, limit)
         return all_results
 
+    def search_other_unanswered(self, limit=INF):
+        dummy_bot = Bot(config.class_code)
+        all_posts = dummy_bot.get_all_posts()
+        unanswered = []
+        for post in all_posts:
+            if post.has_answer == False:
+                unanswered.append(post)
+        return unanswered
+
 def main():
     if len(sys.argv) == 1:
         id = Index()
