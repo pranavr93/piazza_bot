@@ -11,17 +11,17 @@ from piazza_api.rpc import PiazzaRPC
 INF = 100000
 
 class Bot:
-    def __init__(self):
+    def __init__(self, course_code=config.eecs281):
         self.piazza = Piazza()
         self.piazza.user_login(config.creds['email'], config.creds['password'])
-        self.course = self.piazza.network(config.class_code)
+        self.course = self.piazza.network(course_code)
 
         # rpc api to post notes
         self.piazza_rpc = PiazzaRPC(config.class_code)
         self.piazza_rpc.user_login(config.creds['email'], config.creds['password'])
 
     # get all posts from start_id + 1
-    def get_all_posts(self, start_id=0, limit=INF):
+    def get_all_posts(self, start_id=0, limit=100):
         documents = []
         feed = self.course.get_feed()
         ids = [post['nr'] for post in feed['feed']]
