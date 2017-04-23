@@ -133,9 +133,15 @@ Jarvis will then look through all of the questions that have been posted in the 
 
 Unfortunately, 'best' or 'top' questions is an exteremly subjective measure. We do not have a golden list of the best questions to compare our results to. So, we tried to do a few things. We looked through several weeks worth of questions, and tried to find a few, exteremly important posts that we knew \textit{must} show up in the final output. These included instructor clarification posts, notes about when and where the exams were, and other important course logistic posts. For the questions we found, Jarvis always had these in the top ten. The other way we were able to evaluate is by manually looking at the questions that Jarvis has found, and attempt to determine if the questions reflect the best questions posted that week. Again, this was exteremly subjective, but for every question listed in the top questions, we were able to find something about it that made it worthy of being in the list.
 
+\subsection{Better Search Features}
+To take advantage of our improved tag feature, students can post private questions with their search query, under a specific tag. When Jarvis sees questions that are posted with this tag, it searches for all similar questions and responds to the post with links to the most similar questions. While this is a more involved process then using the built in search feature in Piazza, we feel that the improved accuracy of the results is worth the additional time investment.
+
+To evaluate our search results, we prepared a list of posts that we were looking for, and some keyword queries to try to locate those posts. We found that, when the post we were looking for was very recent, our improved search did not perform any better than the built in search. However, this is expected, as Piazza's search feature is heavilty skewed towards the most recent posts. Once we searched for posts that were further in the past, our system performed much better. Unfortunately, since we are trying to improve on Piazza's ranking, we cannot use there results as a source of truth against which to calculate kendalls tau or other useful metrics. Therefore, most of our measurements were exteremly subjective, and involved entering in identical queries into both systems and manually comparing the results. The results returned were almost always the same, but our results ranked the documents we were actually looking for much higher than Piazza's default search.
+
 \section{Discussion}
 
 \subsection{Conclusion}
+TODO TODO TODO TODO
 
 \subsection{Deliverables}
 We have open-sourced on implmentation of Jarvis, as well as the code to download and index Piazza. All of the Jarvis bot code is available on Github, \href{https://github.com/pranavr93/piazza_bot}{here}
@@ -145,6 +151,9 @@ A large portion of our work had to do with dealing with messy input data scraped
 
 \subsection{Future Work}
 In the future, we can improve our algorithm by improving on term selection and similarity calculation. For term selection, we can improve by using n-gram, for example bigram or trigram, which may better capture the relationship in each document.Also, we could try implement  grammar structure analysis of a sentence using a set of input transformation rules to represent grammar rules. For similarity calculation, we can try applying different similarity functions and use cross validation to find a better model. Besides, we could also try to applying applying new techniques, for example word2vec, to reduce the calculation.
+
+more TODO TODO TODO TODO
+
 
 
 \bibliographystyle{ACM-Reference-Format}
