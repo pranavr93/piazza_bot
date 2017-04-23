@@ -21,17 +21,16 @@
 \acmISBN{123-4567-24-567/08/06}
 
 %Conference
-\acmConference[WOODSTOCK'97]{ACM Woodstock conference}{July 1997}{El
-  Paso, Texas USA} 
-\acmYear{1997}
-\copyrightyear{2016}
+\acmConference[UMich'17]{EECS 549/SI 650}{April 2017}{Ann Arbor MI, USA} 
+\acmYear{2017}
+\copyrightyear{2017}
 
-\acmPrice{15.00}
+\acmPrice{Free}
 
 
 \begin{document}
 \title{Jarvis - A Smart Bot for Piazza}
-\author{Pranav Ramarao, Isaac Bowen, Yu Ke}
+\author{Pranav Ramarao, Isaac Bowen, Ke Yu}
 \orcid{1234-5678-9012}
 \affiliation{%
   \institution{University of Michigan}
@@ -74,7 +73,9 @@ Piazza is a free online gathering place where students can ask and answer questi
 \end{enumerate}
 
 \subsection{Piazza}
-\subsection{Chat Bots}
+Piazza is an online discussion forum where student can get their questions answered by peers and instructors. Students can post questions, answers, notes, show gratefulness, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course.Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around
+
+\subsection{Chat Bots}A chatbot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chatbots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chatbots
 
 \section{Method}
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
@@ -95,9 +96,20 @@ Piazza does not provide an elegant or easy way to problematically interact with 
 \subsection{Data Preprocessing}
 
 \subsection{Duplicate Detection}
+We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
+
+In this function, we firstly did several preprocessing approach by removing all HTML paragraph tags from the post body, concatenating the title with the body together, and treating both of them as one document for convenience. 
+Then, in order to improve reliability and efficiency in similarity measure, we did following preprocessing steps. For each document, we do the basic text cleaning: We first use regular expressions to get rid of symbols that are useless to the calculation. And then, transform each word to its lower case, after which we remove the stopword from the documents and applied Porter stemmer [Porter, Martin F. "Snowball: A language for stemming algorithms." (2001).] from nltk[Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.] package to further shrink the vocabulary size. After the documents are cleaned and stemmed, we split the text by space in order to built the vector space model. 
+
+By representing the text document using vector space model, we can calculate relevance between the documents. Before that, for the term selection, we calculated the TF* IDF(term frequency–inverse document frequency) score for each words in documents by using sklearn built-in function. And then calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
 
 \subsection{Top Questions}
 \subsection{Improved Search Feature}
+
+\section{Discussion}
+
+\subsection{Future Work}
+In the future, we can improve our algorithm by improving on term selection and similarity calculation. For term selection, we can improve by using n-gram, for example bigram or trigram, which may better capture the relationship in each document.Also, we could try implement  grammar structure analysis of a sentence using a set of input transformation rules to represent grammar rules. For similarity calculation, we can try applying different similarity functions and use cross validation to find a better model. Besides, we could also try to applying applying new techniques, for example word2vec, to reduce the calculation.
 
 
 \bibliographystyle{ACM-Reference-Format}
