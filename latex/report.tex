@@ -40,7 +40,7 @@
 
 
 % The default list of authors is too long for headers}
-\renewcommand{\shortauthors}{B. Trovato et al.}
+\renewcommand{\shortauthors}{Ramarao, Bowen, Yu}
 
 
 \begin{abstract}
@@ -73,20 +73,15 @@ Finding the top questions for the week for the FAQ is a question where both trad
 Improve Piazza's search feature is directly an IR task. Piazza's search isn't very good at IR, and we want to make it better!
 
 
-\section{Backgrounds}
-
-Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Leading campuses across North America have a significant Piazza presence. Larger courses typically have over 500 students getting involved in the feed. Some of the painpoints however are :
-\begin{enumerate}
-\item students tend to ask duplicate questions without searching for them first.
-\item students are overwhelmed by the huge number of questions on piazza specially in larger courses.
-\item the search facilities that piazza provides are average and rely on recency based features and fail to consider relevance based ones.
-\end{enumerate}
-TODO: Cleanup above duplication
+\section{Background}
 
 \subsection{Piazza}
-Piazza is an online discussion forum where student can get their questions answered by peers and instructors. Students can post questions, answers, notes, show gratefulness, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course.Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around
+Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Students can ask questions, which fellow students and instructors can attempt to answer. Students can post questions, answers, and notes, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course. Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around. Leading campuses across North America have a significant Piazza presence, especially for computer science courses. Larger courses typically have over 500 students getting involved in the feed
 
-\subsection{Chat Bots}A chatbot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chatbots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chatbots
+\subsection{Chat Bots}A chatbot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chatbots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chatbots.
+
+\subsection{Related Work}
+There are many smart chat bot technologies that have emerged recently. TODO is this worht mentioning?
 
 \section{Method}
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
@@ -141,6 +136,7 @@ To evaluate our search results, we prepared a list of posts that we were looking
 \section{Discussion}
 
 \subsection{Conclusion}
+We design and implmented Jarvis bot, a python implmentation of a chat bot meets information retervial system that allows us to more effectively manage Piazza with large classes.
 TODO TODO TODO TODO
 
 \subsection{Deliverables}
@@ -151,6 +147,10 @@ A large portion of our work had to do with dealing with messy input data scraped
 
 \subsection{Future Work}
 In the future, we can improve our algorithm by improving on term selection and similarity calculation. For term selection, we can improve by using n-gram, for example bigram or trigram, which may better capture the relationship in each document.Also, we could try implement  grammar structure analysis of a sentence using a set of input transformation rules to represent grammar rules. For similarity calculation, we can try applying different similarity functions and use cross validation to find a better model. Besides, we could also try to applying applying new techniques, for example word2vec, to reduce the calculation.
+
+To improve our weekly Top Questions feature, we have a few plans. For one, we want to expand, so that we aren't just looking at questions, but also answers. It is entirely possible that many different questions all have the same common problem, and are given a common answer. It would be great for our FAQ to be able to list these very common answers, and all of the questions that they are associated with.
+
+A goal that is a bit more far-fetched, but certainly within the realm of possiblity, is to actually add full question answering to Jarvis. Jarvis could look at recently posted questions, and instead of simplyl linking to a previous post, it could try to answer the question. This would involved adding new layers to Jarvis, but the infastructure is set up to be easy to expand.
 
 more TODO TODO TODO TODO
 
