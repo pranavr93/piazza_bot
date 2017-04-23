@@ -76,8 +76,8 @@ Piazza is a free online gathering place where students can ask and answer questi
 \subsection{Piazza}
 \subsection{Chat Bots}
 
-\section{Method//Approach}
-We designed and implmented Jarvis, a bot written in python that can accomplish these goals. 
+\section{Method}
+We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
 
 \subsection{System Overview}
 Jarvis works by indexing all of the post on a given course on Piazza. On startup, it will bulk download all of the questions posted previously and constructed an index from there. After that, it sits in a loop, waiting for new questions to be posted. 
@@ -85,7 +85,12 @@ Jarvis works by indexing all of the post on a given course on Piazza. On startup
 \subsection{Tools and packages used}
 We took advantage of several python packages and libaries to make the devolpment of Jarvis faster and the results more correct. We used python whoosh for indexing the documents. This allowed us to index the documents, but first we actually had to collect them in one place. To do this, we needed to download all olf the questions off of Piazza. Piazza does not have an offical supported API, but there is an unoffical API that has been constructed through some reverse engineering. While this did not work as perfectly as a fully supported first party API would have, the results were surprisingly good and required only a small amount of work on our part to work with.
 
+\subsection{Data Extraction}
+Piazza does not provide an elegant or easy way to problematically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered by doing some things todo fix me. We started from this API, and then built our own, higher level srapper that would read in posts and then store them as objects in memory that were easier to work with. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data as a .csv file, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes.
+
+
 \subsection{Indexing and Feature Extraction}
+
 
 \subsection{Data Preprocessing}
 
