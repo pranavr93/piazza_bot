@@ -85,13 +85,13 @@ There are many smart chat bot technologies that have emerged recently. TODO is t
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
 
 \subsection{System Overview}
-Jarvis works by indexing all the contents of the course on Piazza. On startup, it will bulk download all of the questions posted previously and constructed an index from there. After that, it sits in a loop, waiting for new questions to be posted. 
+Jarvis works by indexing all the contents of the course on Piazza. On start-up, it bulk downloads all of the questions and answers posted previously and constructs an index from there. After that, it periodically scrapes new contents and does an incremental update to the index.
 
 \subsection{Tools and packages used}
-We took advantage of several python packages and libaries to make the devolpment of Jarvis faster and the results more correct. We used python whoosh for indexing the documents. This allowed us to index the documents, but first we actually had to collect them in one place. To do this, we needed to download all olf the questions off of Piazza. Piazza does not have an offical supported API, but there is an unoffical API that has been constructed through some reverse engineering. While this did not work as perfectly as a fully supported first party API would have, the results were surprisingly good and required only a small amount of work on our part to work with.
+We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries. 
 
 \subsection{Data Extraction}
-Piazza does not provide an elegant or easy way to problematically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered by doing some things todo fix me. WYue started from this API, and then built our own, higher level srapper that would read in posts and then store them as objects in memory that were easier to work with. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data as a .csv file, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of eecs 281 data, and were able to use that as our training set.
+Piazza does not provide an elegant or easy way to programmatically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered [*insert reference*] and most of the actions that one can perform on the piazza website can be done through the api. We started from this API, and then built our own abstraction on top of it that would read in posts and then store them in our whoosh on disk index. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of the course EECS 281, and were able to use that as our training set.
 
 
 \subsection{Indexing and Feature Extraction}
@@ -108,6 +108,19 @@ Then, in order to improve reliability and efficiency in similarity measure, we d
 By representing the text document using vector space model, we can calculate relevance between the documents. Before that, for the term selection, we calculated the TF* IDF(term frequency–inverse document frequency) score for each words in documents by using sklearn built-in function. And then calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
 
 \subsection{Top Questions}
+Every week on a Sunday, Jarvis makes an attempt to post the top 10 questions that could be relevant for every student in the course. To do this, Jarvis retrieves all the posts made one week prior to that Sunday from the whoosh index. Posts that do not contain an instructor answer are filtered out since they would not be of much use. With the remaining posts, Jarvis looks at various features of the posts and scores them. The key features that contribute to the score are :
+
+\begin{enumerate}
+  \item \# good question endorsements
+  \item \# good question endorsements by TAs
+  \item \# good answer endorsements
+  \item \# good answer endorsements by TAs
+  \item \# unique views
+  \item \# student follow-ups
+\end{enumerate}
+
+For each of the above features, we assign weights based on their importance. We finally rank the results and then return the top 10 results. We also threshold the scores so that during dry weeks, we don't return stale/irrelevant posts.
+
 \subsection{Improved Search Feature}
 
 \section{Results}
