@@ -63,7 +63,17 @@ A related issue is that students aren't getting the most they could out of Piazz
 \subsection{Better Search Features}
 Piazza's search features leave something to be desired. The largest problem seems to be that the results are very heavily skewed towards the most recent results, when that may not actually be what the student is looking for. We wanted to provide a method for students to more accurately search Piazza for their questions (or answers).
 
-\section{Introduction}
+\subsection{Information Reterival}
+How do we formulate the above problems as information reterival problems?
+
+Finding duplicate questions is a natural IR problem. We have to find the most similiar posts in the collection, and then see if similarity score is above the threshold we have chosen. If so, we can flag this question as a duplicate.
+
+Finding the top questions for the week for the FAQ is a question where both traditional IR techniques come into play, and we can use specific information made available from the Piazza platform.
+
+Improve Piazza's search feature is directly an IR task. Piazza's search isn't very good at IR, and we want to make it better!
+
+
+\section{Backgrounds}
 
 Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Leading campuses across North America have a significant Piazza presence. Larger courses typically have over 500 students getting involved in the feed. Some of the painpoints however are :
 \begin{enumerate}
@@ -71,6 +81,7 @@ Piazza is a free online gathering place where students can ask and answer questi
 \item students are overwhelmed by the huge number of questions on piazza specially in larger courses.
 \item the search facilities that piazza provides are average and rely on recency based features and fail to consider relevance based ones.
 \end{enumerate}
+TODO: Cleanup above duplication
 
 \subsection{Piazza}
 Piazza is an online discussion forum where student can get their questions answered by peers and instructors. Students can post questions, answers, notes, show gratefulness, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course.Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around
@@ -87,7 +98,7 @@ Jarvis works by indexing all of the post on a given course on Piazza. On startup
 We took advantage of several python packages and libaries to make the devolpment of Jarvis faster and the results more correct. We used python whoosh for indexing the documents. This allowed us to index the documents, but first we actually had to collect them in one place. To do this, we needed to download all olf the questions off of Piazza. Piazza does not have an offical supported API, but there is an unoffical API that has been constructed through some reverse engineering. While this did not work as perfectly as a fully supported first party API would have, the results were surprisingly good and required only a small amount of work on our part to work with.
 
 \subsection{Data Extraction}
-Piazza does not provide an elegant or easy way to problematically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered by doing some things todo fix me. We started from this API, and then built our own, higher level srapper that would read in posts and then store them as objects in memory that were easier to work with. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data as a .csv file, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes.
+Piazza does not provide an elegant or easy way to problematically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered by doing some things todo fix me. WYue started from this API, and then built our own, higher level srapper that would read in posts and then store them as objects in memory that were easier to work with. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data as a .csv file, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of eecs 281 data, and were able to use that as our training set.
 
 
 \subsection{Indexing and Feature Extraction}
@@ -106,7 +117,31 @@ By representing the text document using vector space model, we can calculate rel
 \subsection{Top Questions}
 \subsection{Improved Search Feature}
 
+\section{Results}
+Here we present the results of our system.
+To test our system, we set up a mock Piazza course where we could post fake questions to Jarvis. Jarvis has read only access to previous semesters of questions, and read/write access on the mock course. When new questions are posted, Jarvis can read those questions, and write answers to them, but it cannot write to the past semesters course.
+
+\subsection{Duplicate Detection}
+To test our system, we found all questions in previous semesters that had been marked with an '@'. This means that an instructor read the question, and decided that it was similar enough to a previous question, that, instead of answering it, they decided to simply link to a previous question. We used this set of questions to test our system. We found that our system performed very well on this data set, responding to more than 90 percent of known duplicate posts correctly.
+
+Perhaps more exciting is the fact that our system was able to idenitfy some duplicate questions that instructors did not find themselves. When we fed our system questions that specifically had not been marked with an '@', we found that some of them were still marked by our bot. Many of these were, in fact, duplicates that had been answered twice, by two seperate instructors at two seperate occasions. However, since this data is not labeled, there is no easy way for us to determine our systems efficacy without looking at every duplicate it flags and checking to see if it seems logical. For the vast majority of the new duplicates flagged by our system, it seems to work well.
+
+\subsection{Top Questions}
+Jarvis's default behavior is to simply sit in a while loop, waiting for new questions to be posted. However, it can be instructed to create a special post on Piazza, containing the top questions for a certian week.
+
+Jarvis will then look through all of the questions that have been posted in the given timeframe, and extract a variety of features from the questions. Based on these combinations of features, Jarvis will assemble as list of the top 10 (TODO FIX ME FIVE TEN WHAT?) questions posted. 
+
+Unfortunately, 'best' or 'top' questions is an exteremly subjective measure. We do not have a golden list of the best questions to compare our results to. So, we tried to do a few things. We looked through several weeks worth of questions, and tried to find a few, exteremly important posts that we knew \textit{must} show up in the final output. These included instructor clarification posts, notes about when and where the exams were, and other important course logistic posts. For the questions we found, Jarvis always had these in the top ten. The other way we were able to evaluate is by manually looking at the questions that Jarvis has found, and attempt to determine if the questions reflect the best questions posted that week. Again, this was exteremly subjective, but for every question listed in the top questions, we were able to find something about it that made it worthy of being in the list.
+
 \section{Discussion}
+
+\subsection{Conclusion}
+
+\subsection{Deliverables}
+We have open-sourced on implmentation of Jarvis, as well as the code to download and index Piazza. All of the Jarvis bot code is available on Github, \href{https://github.com/pranavr93/piazza_bot}{here}
+
+\subsection{Lessons Learned}
+A large portion of our work had to do with dealing with messy input data scraped from Piazza. Because the API is unoffical, there were many additional steps that we had to take before we had a clean dataset of questions and answers for each course. I'm sure we learned some other things. TODO TODO TODO TODO
 
 \subsection{Future Work}
 In the future, we can improve our algorithm by improving on term selection and similarity calculation. For term selection, we can improve by using n-gram, for example bigram or trigram, which may better capture the relationship in each document.Also, we could try implement  grammar structure analysis of a sentence using a set of input transformation rules to represent grammar rules. For similarity calculation, we can try applying different similarity functions and use cross validation to find a better model. Besides, we could also try to applying applying new techniques, for example word2vec, to reduce the calculation.
