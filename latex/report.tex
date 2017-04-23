@@ -64,7 +64,15 @@ A related issue is that students aren't getting the most they could out of Piazz
 \subsection{Better Search Features}
 Piazza's search features leave something to be desired. The largest problem seems to be that the results are very heavily skewed towards the most recent results, when that may not actually be what the student is looking for. We wanted to provide a method for students to more accurately search Piazza for their questions.
 
-\section{Background}
+\section{Introduction}
+
+Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Leading campuses across North America have a significant Piazza presence. Larger courses typically have over 500 students getting involved in the feed. Some of the painpoints however are :
+\begin{enumerate}
+\item students tend to ask duplicate questions without searching for them first.
+\item students are overwhelmed by the huge number of questions on piazza specially in larger courses.
+\item the search facilities that piazza provides are average and rely on recency based features and fail to consider relevance based ones.
+\end{enumerate}
+
 \subsection{Piazza}
 \subsection{Chat Bots}
 
@@ -72,11 +80,21 @@ Piazza's search features leave something to be desired. The largest problem seem
 We designed and implmented Jarvis, a bot written in python that can accomplish these goals. 
 
 \subsection{System Overview}
-Jarvis works by indexing all of the post on a given course on Piazza. On startup, it will bulk download all of the questions posted previously and constructed an index from there.
+Jarvis works by indexing all of the post on a given course on Piazza. On startup, it will bulk download all of the questions posted previously and constructed an index from there. After that, it sits in a loop, waiting for new questions to be posted. 
+
 \subsection{Tools and packages used}
 We took advantage of several python packages and libaries to make the devolpment of Jarvis faster and the results more correct. We used python whoosh for indexing the documents. This allowed us to index the documents, but first we actually had to collect them in one place. To do this, we needed to download all olf the questions off of Piazza. Piazza does not have an offical supported API, but there is an unoffical API that has been constructed through some reverse engineering. While this did not work as perfectly as a fully supported first party API would have, the results were surprisingly good and required only a small amount of work on our part to work with.
 
-OTHER tools?
+\subsection{Indexing and Feature Extraction}
+
+\subsection{Data Preprocessing}
+
+\subsection{Duplicate Detection}
+
+\subsection{Top Questions}
+\subsection{Improved Search Feature}
+
+
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{sigproc} 
 
