@@ -143,7 +143,12 @@ TODO TODO TODO TODO
 We have open-sourced on implmentation of Jarvis, as well as the code to download and index Piazza. All of the Jarvis bot code is available on Github, \href{https://github.com/pranavr93/piazza_bot}{here}
 
 \subsection{Lessons Learned}
-A large portion of our work had to do with dealing with messy input data scraped from Piazza. Because the API is unoffical, there were many additional steps that we had to take before we had a clean dataset of questions and answers for each course. I'm sure we learned some other things. TODO TODO TODO TODO
+A large portion of our work had to do with dealing with messy input data scraped from Piazza. Because the API is unoffical, there were many additional steps that we had to take before we had a clean dataset of questions and answers for each course. 
+
+We have learn how to use existing natural language processing packages to avoid implement basic algorithms from scratch. More importantly, whatever a library is omnipotent, we have to modify it to suit our need. Thus, the importance of a solid foundation in understanding the whole process and every tiny detail of the design would be never be exaggerated. 
+
+I'm sure we learned some other things. 
+TODO TODO TODO TODO
 
 \subsection{Future Work}
 In the future, we can improve our algorithm by improving on term selection and similarity calculation. For term selection, we can improve by using n-gram, for example bigram or trigram, which may better capture the relationship in each document.Also, we could try implement  grammar structure analysis of a sentence using a set of input transformation rules to represent grammar rules. For similarity calculation, we can try applying different similarity functions and use cross validation to find a better model. Besides, we could also try to applying applying new techniques, for example word2vec, to reduce the calculation.
