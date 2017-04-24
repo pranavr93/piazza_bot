@@ -90,7 +90,7 @@ Jarvis works by indexing all the contents of the course on Piazza. On start-up, 
 \subsection{Tools and packages used}
 We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries. 
 
-\subsection{Data Extraction}
+\subsection{Data Crawling}
 Piazza does not provide an elegant or easy way to programmatically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered [*insert reference*] and most of the actions that one can perform on the piazza website can be done through the api. We started from this API, and then built our own abstraction on top of it that would read in posts and then store them in our whoosh on disk index. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of the course EECS 281, and were able to use that as our training set.
 
 
@@ -100,12 +100,17 @@ First, we had to bulk download all of the data from Piazza. For each post on Pia
 We did several preprocessing steps. First, we removed all HTML paragraph tags from the post body, as these don't help determine any expressiveness in the querys. Next, we concatenated the title with the body together, and treating both of them as one document for convenience. 
 Then, in order to improve reliability and efficiency in similarity measure, we did following. For each document, we do the basic text cleaning: We first use regular expressions to get rid of symbols that are useless to the calculation. And then, transform each word to its lower case, after which we remove the stopword from the documents and applied Porter stemmer [Porter, Martin F. "Snowball: A language for stemming algorithms." (2001).] from nltk[Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.] package to further shrink the vocabulary size. The Porter stemmer should allow us to get more accurate results while simulatenously shrinking the index size.
 
+\subsection{Feature Extraction}
+The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post.
+
+
 \subsection{Duplicate Detection}
 We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
 
- After the documents are cleaned and stemmed following the Data Preprocessing steps described above, we split the text by space in order to built the vector space model. 
+After the documents are cleaned and stemmed following the Data Preprocessing steps described above, we split the text by space in order to built the vector space model. 
 
 By representing the text document using vector space model, we can calculate relevance between the documents. Before that, for the term selection, we calculated the TF* IDF(term frequency–inverse document frequency) score for each words in documents by using sklearn built-in function. And then calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
+
 
 \subsection{Top Questions}
 Every week on a Sunday, Jarvis makes an attempt to post the top 10 questions that could be relevant for every student in the course. To do this, Jarvis retrieves all the posts made one week prior to that Sunday from the whoosh index. Posts that do not contain an instructor answer are filtered out since they would not be of much use. With the remaining posts, Jarvis looks at various features of the posts and scores them. The key features that contribute to the score are :
