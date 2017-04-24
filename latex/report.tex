@@ -88,27 +88,24 @@ Improve Piazza's search feature is directly an IR task. Piazza's search isn't ve
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
 
 \subsection{System Overview}
-Jarvis works by indexing all the contents of the course on Piazza. On start-up, it bulk downloads all of the questions and answers posted previously and constructs an index from there. After that, it periodically scrapes new contents and does an incremental update to the index. It can be run locally on an instructors laptop to quickly index and answer all available questions, or left running as a daemon on a dedicate server.
-
+Jarvis works by indexing all the contents of the course on Piazza. On start-up, it bulk downloads all of the questions and answers posted previously and constructs an index from there. After that, it periodically scrapes new contents and does an incremental update to the index. It can be run locally on an instructors laptop to quickly index and answer all available questions, or left running as a daemon on a dedicated server. For most of our experiments, we ran Jarvis locally, but it will be signifigantly more useful to students and staff if it is run on an always-on computer.
 
 \subsection{Tools and packages used}
-We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries. We used NLTK implementation of the Porter stemmer to store our tokens in a standarized form \cite{nltk}. We also took advantage of sklearn to help create our TF-IDF vectors \cite{sklearn}. Finally, numpy makes working with large arrays and matrices much easier than raw python \cite{numpy}.
+We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries \cite{pythonwhoosh}. We used NLTK implementation of the Porter stemmer to store our tokens in a standarized form \cite{nltk}. We also took advantage of sklearn to help create our TF-IDF vectors \cite{sklearn}. Finally, numpy makes working with large arrays and matrices much easier than raw python \cite{numpy}.
 
 \subsection{Data Crawling}
-Piazza does not provide an elegant or easy way to programmatic-ally interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered \cite{pythonwhoosh} and most of the actions that one can perform on the piazza website can be done through the API. We started from this API, and then built our own abstraction on top of it that would read in posts and then store them in our whoosh on disk index. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of the course EECS 281, and were able to use that as our training set.
-
+Piazza does not provide an elegant or easy way to programmatic-ally interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered \cite{piazzaapi} and most of the actions that one can perform on the piazza website can be done through the API. We started from this API, and then built our own abstraction on top of it that would read in posts and then store them in our whoosh on disk index. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of the course EECS 281, and were able to use that as our training set.
 
 \subsection{Feature Extraction}
-The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post.
+The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post. We had to convert, combine, and transform many of the fields that we were given into the actual fields and values that we were looking to extract.
 
 \subsection{Data Preprocessing}
-The subject and body of the post in its raw form is HTML format. We remove all the irrelevant HTML tags from the post body. We concatenate the title with the body together to make it easier for searching purposes.For each document, we perform some basic text cleaning by removing special characters through regex and also convert all text to lowercase.We also remove the stop words from documents and apply Porter stemmer \cite{porterstem} package to further shrink the vocabulary size. 
+The subject and body of the post in its raw form is HTML format. We remove all the irrelevant HTML tags from the post body. We concatenate the title with the body together to make it easier for searching purposes. For each document, we perform some basic text cleaning by removing special characters through regex and also convert all text to lowercase. We also remove the stop words from documents and apply Porter stemmer \cite{porterstem} package to further shrink the vocabulary size. 
 
 \subsection{Duplicate Detection}
 We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
 
-By representing the text document using vector space model, we can calculate relevance between the documents. Before that, for the term selection, we calculated the TF* IDF(term frequency–inverse document frequency) score for each words in documents by using sklearn built-in function. And then calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
-
+By representing the text document using vector space model, we can calculate relevance between the documents. We calculate the TF*IDF (term frequency–inverse document frequency) score for each word in the documents by using sklearn's built-in function. Then, we calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
 
 \subsection{Weekly FAQ}
 Every week on a Sunday, Jarvis makes an attempt to post the top 10 questions that could be relevant for every student in the course. To do this, Jarvis retrieves all the posts made one week prior to that Sunday from the whoosh index. Posts that do not contain an instructor answer are filtered out since they would not be of much use. With the remaining posts, Jarvis looks at various features of the posts and scores them. The key features that contribute to the score are :
@@ -137,7 +134,7 @@ A recency based search has the issue of having important posts go down the searc
 
 \section{Results}
 Here we present the results of our system.
-To test our system, we set up a mock Piazza course where we could post fake questions to Jarvis. Jarvis has read only access to previous semesters of questions, and read/write access on the mock course. When new questions are posted, Jarvis can read those questions, and write answers to them, but it cannot write to the past semesters course.
+To test our system, we set up a mock Piazza course where we could post fake questions to Jarvis. Jarvis has read only access to previous semesters of questions, and read/write access on the mock course. When new questions are posted, Jarvis can read those questions, and write answers to them, but it cannot write to the past semesters course. We didn't want Jarvis answering real student questions quite yet.
 
 \subsection{Duplicate Detection}
 To test our system, we found all questions in previous semesters that had been marked with an '@'. This means that an instructor read the question, and decided that it was similar enough to a previous question, that, instead of answering it, they decided to simply link to a previous question. We used this set of questions to test our system. We found that our system performed very well on this data set, responding to more than 90 percent of known duplicate posts correctly.
@@ -200,6 +197,11 @@ Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on 
 \bibitem{numpy} 
 \textit{NumPy - The fundamental package for scientific computing with Python} 
 \\\texttt{http://www.numpy.org/} 
+
+\bibitem{piazzaapi} 
+\textit{Unofficial Client for Piazza's Internal API} 
+\\ Hamza Faran
+\\\texttt{https://github.com/hfaran/piazza-api} 
  
 \bibitem{nltk} 
 \textit{Natural Language Toolkit} 
