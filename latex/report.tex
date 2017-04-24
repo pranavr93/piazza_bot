@@ -1,6 +1,8 @@
 \documentclass[sigconf]{acmart}
 
 \usepackage{booktabs} % For formal tables
+\usepackage{graphicx}
+\graphicspath{ {img/} }
 
 % Copyright
 %\setcopyright{none}
@@ -78,8 +80,9 @@ Piazza is a free online gathering place where students can ask and answer questi
 
 \subsection{Chat Bots}A chatbot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chatbots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chatbots.
 
-\subsection{Related Work}
-There are many smart chat bot technologies that have emerged recently. TODO is this worht mentioning?
+\begin{figure*}
+\includegraphics[width=\textwidth]{piazza_stats}
+\end{figure*}
 
 \section{Method}
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
@@ -102,6 +105,7 @@ Then, in order to improve reliability and efficiency in similarity measure, we d
 
 \subsection{Feature Extraction}
 The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post.
+
 
 
 \subsection{Duplicate Detection}
