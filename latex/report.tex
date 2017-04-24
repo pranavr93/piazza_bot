@@ -107,6 +107,13 @@ We implemented a function called find\_top\_N\_similar\_docs(), which achieve fo
 
 By representing the text document using vector space model, we can calculate relevance between the documents. We calculate the TF*IDF (term frequency–inverse document frequency) score for each word in the documents by using sklearn's built-in function. Then, we calculate the similarity between new posted documents with all documents in the whole collection. We have a variety of methods to use to calculate similarity. We could use cosine, Dice, or Jaccard similarity scores. Jaccard similarity scores normally work well on shorter documents (shorter than the average Piazza post), so we decided not to use that \cite{tamingtext}. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
 
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{answer}
+\caption{Jarvis bot, linking a student to a previously answered question}
+\end{figure*}
+
+
 \subsection{Weekly FAQ}
 Every week on a Sunday, Jarvis makes an attempt to post the top 10 questions that could be relevant for every student in the course. To do this, Jarvis retrieves all the posts made one week prior to that Sunday from the whoosh index. Posts that do not contain an instructor answer are filtered out since they would not be of much use. With the remaining posts, Jarvis looks at various features of the posts and scores them. The key features that contribute to the score are :
 
@@ -132,6 +139,11 @@ For the search task, we are able to improve upon piazza's search facility in the
 
 A recency based search has the issue of having important posts go down the search results. We make recency as one of the features among the others. We use a decay function to make sure that old posts don't get a very low score. From our experience, typically posts which are older than a month get the same recency score. We run the query through a spell correction engine which replaces query terms when a high confidence is present. We do not perform an AND based search as sometimes, students include an extra term which returns no results. Hence, we score results that are able to match all terms more, but when no post matches all terms, we see the number of terms matched and also the maximum n-gram match for the query. 
 
+\begin{figure*}
+\includegraphics[width=\textwidth]{faq}
+\caption{Jarvis bot, posting the weekly FAQ}
+\end{figure*}
+
 \section{Results}
 Here we present the results of our system.
 To test our system, we set up a mock Piazza course where we could post fake questions to Jarvis. Jarvis has read only access to previous semesters of questions, and read/write access on the mock course. When new questions are posted, Jarvis can read those questions, and write answers to them, but it cannot write to the past semesters course. We didn't want Jarvis answering real student questions quite yet.	
@@ -149,6 +161,7 @@ To evaluate the 'best' or 'top' questions is an extremely subjective measure. We
 To take advantage of our improved tag feature, students can post private questions with their search query, under a specific tag. When Jarvis sees questions that are posted with this tag, it searches for all similar questions and responds to the post with links to the most similar questions. While this is a more involved process then using the built in search feature in Piazza, we feel that the improved accuracy of the results is worth the additional time investment.
 
 To evaluate our search results, we prepared a list of posts that we were looking for, and some keyword queries to try to locate those posts. We found that, when the post we were looking for was very recent, our improved search did not perform any better than the built in search. However, this is expected, as Piazza's search feature is heavily skewed towards the most recent posts. Once we searched for posts that were further in the past, our system performed much better. Unfortunately, since we are trying to improve on Piazza's ranking, we cannot use there results as a source of truth against which to calculate Kendall's Tau or other useful metrics. Therefore, most of our measurements were extremely subjective, and involved entering in identical queries into both systems and manually comparing the results. The results returned were almost always the same, but our results ranked the documents we were actually looking for much higher than Piazza's default search.
+
 
 \section{Discussion}
 
