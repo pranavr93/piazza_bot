@@ -122,6 +122,15 @@ Every week on a Sunday, Jarvis makes an attempt to post the top 10 questions tha
 For each of the above features, we assign weights based on their importance. We finally rank the results and then return the top 10 results. We also threshold the scores so that during dry weeks, we don't return stale/irrelevant posts.
 
 \subsection{Improved Search Feature}
+For the search task, we are able to improve upon piazza's search facility in the following ways:
+\begin{enumerate}
+\item treat recency as a metric
+\item support typos made in query
+\item OR based query on each term rather than AND based one
+\item importance to finding query term on subject/body rather than answer
+\end{enumerate}
+
+A recency based search has the issue of having important posts go down the search results. We make recency as one of the features among the others. We use a decay function to make sure that old posts don't get a very low score. From our experience, typically posts which are older than a month get the same recency score. We run the query through a spell correction engine which replaces query terms when a high confidence is present. We do not perform an AND based search as sometimes, students include an extra term which returns no results. Hence, we score results that are able to match all terms more, but when no post matches all terms, we see the number of terms matched and also the maximum n-gram match for the query. 
 
 \section{Results}
 Here we present the results of our system.
