@@ -58,11 +58,21 @@ Piazza is a free online gathering place where students can ask and answer questi
 \subsection{Chat Bots}
 A chat bot is a computer program which conducts conversational question answering with users in a certain domain or on a certain topic with natural language sentence. Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chat bots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chat bots. There are various different levels at which chat bots attempt to simulate a human - some are little more than guided menus, while others incorporate deep learning and Artificial Intelligence to answer questions.
 
+\begin{figure*}
+\includegraphics[width=\textwidth]{piazza_stats}
+\caption{A Piazza question, containing both a student and instructor answer. The highlighted boxes show some of the many features that we can extract from the post.}
+\end{figure*}
+
 \section{Problem}
 Piazza is a great tool for students and instructors to interact with each other. It allows students to post questions on a class wide forum, where other students and instructors can answer the questions. For small classes, where the question volume is very low, the system works well. Instructors can respond quickly, and scale isn't an issue. However, as the departments grow and class sizes increase, it becomes difficult to answer all the questions in a timely manner. For this project, the authors wanted to focus on a few specific issues related to Piazza at scale. They are interested in this research topic not only to gain insights, but also to help themselves! The authors are instructors for undergraduate courses at UofM - these course have roughly 400 and 600 students and only a handful of staff members to manage the class. They are interested in solving these problems to assists in the courses they teach. The goal is to free up instructor's time so they don't have to spend all of their time answering questions on Piazza, and provide a better experience for students using the platform.
 
 \subsection{Duplicate Questions}
 As one of the side effects of the number of students posting questions, it becomes difficult for other students in the class to know if their question has already been asked. Given the question volume, they may not have time to read every question that is asked nor use the search facilities that Piazza provides. As a result, students repost a question that is very similar to one that has already been asked. For instructors, this means that they have to answer the same question over and over, or link students to the previous question. This is not an easy task as a similar question might have been answered by another instructor which requires instructors to search of be aware of the questions that have been posted by students before hand, which clearly is not practical. For students, it could provide confusion, as many similar questions have very similar answers, but students are quite sure if its the same question (and therefore has the same answer). There is also the consistency issue where two instructors might not concur exactly on the duplicate questions which confuses students even more.
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{answer}
+\caption{Jarvis bot, linking a student to a previously answered question}
+\end{figure*}
 
 \subsection{Lack of a Weekly Summary}
 A related issue is that students aren't getting the most they could out of Piazza because of the number of questions. Students can't dedicate hours every day to read through all questions posted every day. Also, many of the question are very student-specific (they won't relate to other students, so the whole class doesn't benefit from reading them). However, there are some questions that are very common, or exceptionally helpful, and it would be beneficial to aggregate these high quality questions. Ideally, students want to see a weekly report of 10 questions that they do not want to miss out on. This should allow students to get much more from Piazza, and allow them to use it as the interactive learning tool it was designed to be.
@@ -79,9 +89,10 @@ Finding the top questions for the week for the FAQ is a question where both trad
 
 Improve Piazza's search feature is directly an IR task. Piazza's search isn't very good at IR, and we want to make it better!
 
+
 \begin{figure*}
-\includegraphics[width=\textwidth]{piazza_stats}
-\caption{A Piazza question, containing both a student and instructor answer. The highlighted boxes show some of the many features that we can extract from the post.}
+\includegraphics[width=\textwidth]{faq}
+\caption{Jarvis bot, posting the weekly FAQ}
 \end{figure*}
 
 \section{Method}
@@ -106,12 +117,6 @@ The subject and body of the post in its raw form is HTML format. We remove all t
 We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
 
 By representing the text document using vector space model, we can calculate relevance between the documents. We calculate the TF*IDF (term frequency–inverse document frequency) score for each word in the documents by using sklearn's built-in function. Then, we calculate the similarity between new posted documents with all documents in the whole collection. We have a variety of methods to use to calculate similarity. We could use cosine, Dice, or Jaccard similarity scores. Jaccard similarity scores normally work well on shorter documents (shorter than the average Piazza post), so we decided not to use that \cite{tamingtext}. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
-
-
-\begin{figure*}
-\includegraphics[width=\textwidth]{answer}
-\caption{Jarvis bot, linking a student to a previously answered question}
-\end{figure*}
 
 
 \subsection{Weekly FAQ}
@@ -139,10 +144,6 @@ For the search task, we are able to improve upon piazza's search facility in the
 
 A recency based search has the issue of having important posts go down the search results. We make recency as one of the features among the others. We use a decay function to make sure that old posts don't get a very low score. From our experience, typically posts which are older than a month get the same recency score. We run the query through a spell correction engine which replaces query terms when a high confidence is present. We do not perform an AND based search as sometimes, students include an extra term which returns no results. Hence, we score results that are able to match all terms more, but when no post matches all terms, we see the number of terms matched and also the maximum n-gram match for the query. 
 
-\begin{figure*}
-\includegraphics[width=\textwidth]{faq}
-\caption{Jarvis bot, posting the weekly FAQ}
-\end{figure*}
 
 \section{Results}
 Here we present the results of our system.
