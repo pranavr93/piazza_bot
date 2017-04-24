@@ -1,6 +1,8 @@
 \documentclass[sigconf]{acmart}
 
 \usepackage{booktabs} % For formal tables
+\usepackage{graphicx}
+\graphicspath{ {img/} }
 
 % Copyright
 %\setcopyright{none}
@@ -76,6 +78,16 @@ Finding the top questions for the week for the FAQ is a question where both trad
 
 Improve Piazza's search feature is directly an IR task. Piazza's search isn't very good at IR, and we want to make it better!
 
+\section{Background}
+
+\subsection{Piazza}
+Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Students can ask questions, which fellow students and instructors can attempt to answer. Students can post questions, answers, and notes, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course. Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around. Leading campuses across North America have a significant Piazza presence, especially for computer science courses. Larger courses typically have over 500 students getting involved in the feed
+
+\subsection{Chat Bots}A chatbot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chatbots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chatbots.
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{piazza_stats}
+\end{figure*}
 
 \section{Method}
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
@@ -92,7 +104,6 @@ Piazza does not provide an elegant or easy way to programmatically interact with
 
 \subsection{Feature Extraction}
 The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post.
-
 
 \subsection{Data Preprocessing}
 The subject and body of the post in its raw form is HTML format. We remove all the irrelevant HTML tags from the post body. We concatenate the title with the body together to make it easier for searching purposes.For each document, we perform some basic text cleaning by removing special characters through regex and also convert all text to lowercase.We also remove the stopwords from documents and apply Porter stemmer [Porter, Martin F. "Snowball: A language for stemming algorithms." (2001).] from nltk[Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.] package to further shrink the vocabulary size. 
