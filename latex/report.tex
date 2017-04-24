@@ -92,7 +92,7 @@ Jarvis works by indexing all the contents of the course on Piazza. On start-up, 
 
 
 \subsection{Tools and packages used}
-We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries. 
+We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries. We used NLTK implementation of the Porter stemmer to store our tokens in a standarized form \cite{nltk}. We also took advantage of sklearn to help create our TF-IDF vectors \cite{sklearn}. Finally, numpy makes working with large arrays and matrices much easier than raw python \cite{numpy}.
 
 \subsection{Data Crawling}
 Piazza does not provide an elegant or easy way to programmatic-ally interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered \cite{pythonwhoosh} and most of the actions that one can perform on the piazza website can be done through the API. We started from this API, and then built our own abstraction on top of it that would read in posts and then store them in our whoosh on disk index. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of the course EECS 281, and were able to use that as our training set.
@@ -102,7 +102,7 @@ Piazza does not provide an elegant or easy way to programmatic-ally interact wit
 The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post.
 
 \subsection{Data Preprocessing}
-The subject and body of the post in its raw form is HTML format. We remove all the irrelevant HTML tags from the post body. We concatenate the title with the body together to make it easier for searching purposes.For each document, we perform some basic text cleaning by removing special characters through regex and also convert all text to lowercase.We also remove the stop words from documents and apply Porter stemmer [Porter, Martin F. "Snowball: A language for stemming algorithms." (2001).] from nltk[Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.] package to further shrink the vocabulary size. 
+The subject and body of the post in its raw form is HTML format. We remove all the irrelevant HTML tags from the post body. We concatenate the title with the body together to make it easier for searching purposes.For each document, we perform some basic text cleaning by removing special characters through regex and also convert all text to lowercase.We also remove the stop words from documents and apply Porter stemmer \cite{porterstem} package to further shrink the vocabulary size. 
 
 \subsection{Duplicate Detection}
 We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
@@ -146,7 +146,7 @@ Perhaps more exciting is the fact that our system was able to identify some dupl
 
 \subsection{Weekly FAQ}
 
-'best' or 'top' questions is an extremely subjective measure. We do not have a golden list of the best questions to compare our results with. We looked through several weeks worth of questions, and tried to find a few, extremely important posts that we knew \textit{must} show up in the final list. These included instructor clarification posts, notes about when and where the exams were, and other important course logistic posts. For the questions we found, Jarvis always had these in the top ten. The other way we were able to evaluate is by manually looking at the questions that Jarvis has found, and attempt to determine if the questions reflect the important questions posted that week. We notice that 9.4/10 questions on average are important questions. One point to note is that during tight weeks, typically more than just 10 important questions are present. Hence, we have a good precision number (94\%). However, calculating recall wouldn't do justice to the task since Jarvis trims the rest of the results. One other experiment we conducted was that we tried to find the 5 most crucial questions for the week and checked if Jarvis had these 5 questions in the top 10 list. We noticed that Jarvis was able to get 4.6 of them on average.
+To evaluate the 'best' or 'top' questions is an extremely subjective measure. We do not have a golden list of the best questions to compare our results with. We looked through several weeks worth of questions, and tried to find a few, extremely important posts that we knew \textit{must} show up in the final list. These included instructor clarification posts, notes about when and where the exams were, and other important course logistic posts. For the questions we found, Jarvis always had these in the top ten. The other way we were able to evaluate is by manually looking at the questions that Jarvis has found, and attempt to determine if the questions reflect the important questions posted that week. We notice that 9.4/10 questions on average are important questions. One point to note is that during tight weeks, typically more than just 10 important questions are present. Hence, we have a good precision number (94\%). However, calculating recall wouldn't do justice to the task since Jarvis trims the rest of the results. One other experiment we conducted was that we tried to find the 5 most crucial questions for the week and checked if Jarvis had these 5 questions in the top 10 list. We noticed that Jarvis was able to get 4.6 of them on average.
 
 \subsection{Better Search Features}
 To take advantage of our improved tag feature, students can post private questions with their search query, under a specific tag. When Jarvis sees questions that are posted with this tag, it searches for all similar questions and responds to the post with links to the most similar questions. While this is a more involved process then using the built in search feature in Piazza, we feel that the improved accuracy of the results is worth the additional time investment.
@@ -185,20 +185,31 @@ A goal that is a bit more far-fetched, but certainly within the realm of possibi
 \bibliography{sigproc} 
 
 \begin{thebibliography}{9}
+
+
+\bibitem{porterstem} 
+\textit{Snowball: A language for stemming algorithms} 
+Porter, Martin F
+Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.
+
 \bibitem{pythonwhoosh} 
 \textit{Python Whoosh} 
-Matt Chaput
+\\ Matt Chaput
 \\\texttt{http://pypi.python.org/pypi/Whoosh/}
  
-\bibitem{einstein} 
-Albert Einstein. 
-\textit{Zur Elektrodynamik bewegter K{\"o}rper}. (German) 
-[\textit{On the electrodynamics of moving bodies}]. 
-Annalen der Physik, 322(10):891–921, 1905.
+\bibitem{numpy} 
+\textit{NumPy - The fundamental package for scientific computing with Python} 
+\\\texttt{http://www.numpy.org/} 
  
-\bibitem{knuthwebsite} 
-Knuth: Computers and Typesetting,
-\\\texttt{http://www-cs-faculty.stanford.edu/\~{}uno/abcde.html}
+\bibitem{nltk} 
+\textit{Natural Language Toolkit} 
+\\\texttt{http://www.nltk.org//}
+
+\bibitem{sklearn} 
+\textit{scikit-learn - Machine Learning in Python} 
+\\\texttt{http://scikit-learn.org/stable/}
+
+
 \end{thebibliography}
 
 \end{document}
