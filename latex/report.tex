@@ -55,7 +55,9 @@ In this work, we explore some of the challenges faced with Piazza, specifically 
 \subsection{Piazza}
 Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Students can ask questions, which fellow students and instructors can attempt to answer. Students can post questions, answers, and notes, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course. Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around. Leading campuses across North America have a significant Piazza presence, especially for computer science courses. Larger courses typically have over 500 students getting involved in the feed
 
-\subsection{Chat Bots}A chat bot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chat bots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chat bots.
+\subsection{Chat Bots}
+A chat bot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chat bots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chat bots. There are various different levels at which chatbots attempt to simulate a human - some are little more than guided menus, while others incorporate deep learning and Artifical Intelligence to answer questions.
+
 
 \section{Problem}
 Piazza is a great tool for students and instructors to interact with each other. It allows students to post questions on a class wide forum, where other students and instructors can answer the questions. For small classes, where the question volume is very low, the system works well. Instructors can respond quickly, and scale isn't an issue. However, as the departments grow and class sizes increase, it becomes difficult to answer all the questions in a timely manner. For our project, we wanted to focus on a few specific issues related to Piazza at scale. The authors are instructors for undergraduate courses at UofM - these course have roughly 400 and 600 students and only a handful of staff members to manage the class. We are interested in solving these problems to assists in our courses. We want to free up instructor's time so they don't have to spend all of their time answer questions on Piazza, and provide a better experience for students.
@@ -79,15 +81,16 @@ Finding the top questions for the week for the FAQ is a question where both trad
 Improve Piazza's search feature is directly an IR task. Piazza's search isn't very good at IR, and we want to make it better!
 
 \begin{figure*}
-\caption{A Piazza question, containing both a student and instructor answer. The highlighted boxes show some of the many features that we can extract from the post.}
 \includegraphics[width=\textwidth]{piazza_stats}
+\caption{A Piazza question, containing both a student and instructor answer. The highlighted boxes show some of the many features that we can extract from the post.}
 \end{figure*}
 
 \section{Method}
 We designed and implemented Jarvis, a bot written in python that can accomplish these goals. 
 
 \subsection{System Overview}
-Jarvis works by indexing all the contents of the course on Piazza. On start-up, it bulk downloads all of the questions and answers posted previously and constructs an index from there. After that, it periodically scrapes new contents and does an incremental update to the index.
+Jarvis works by indexing all the contents of the course on Piazza. On start-up, it bulk downloads all of the questions and answers posted previously and constructs an index from there. After that, it periodically scrapes new contents and does an incremental update to the index. It can be run locally on an instructors laptop to quickly index and answer all available questions, or left running as a daemon on a dedicate server.
+
 
 \subsection{Tools and packages used}
 We took advantage of several python packages and libraries to make the development of Jarvis smoother and more stable. We used python's whoosh library for indexing the documents. Whoosh is a full index library that supports many different operations - creating a schema, search index or certain columns, quick searches (using BM25) and also date range queries. 
