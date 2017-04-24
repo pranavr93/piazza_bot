@@ -50,6 +50,12 @@ In this work, we explore some of the challenges faced with Piazza, specifically 
 \keywords{IR, Piazza, search, similarity, FAQ generation, question answer system}
 
 \maketitle
+\section{Introduction}
+
+\subsection{Piazza}
+Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Students can ask questions, which fellow students and instructors can attempt to answer. Students can post questions, answers, and notes, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course. Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around. Leading campuses across North America have a significant Piazza presence, especially for computer science courses. Larger courses typically have over 500 students getting involved in the feed
+
+\subsection{Chat Bots}A chatbot is known as a computer program which conduct conversational question answering  with users in a certain domain or on a certain topic with natural language sentence.Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chatbots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chatbots.
 
 \section{Problem}
 Piazza is a great tool for students and instructors to interact with each other. It allows students to post questions on a class wide forum, where other students and instructors can answer the questions. For small classes, where the question volume is very low, the system works well. Instructors can respond quickly, and scale isn't an issue. However, as the departments grow and class sizes increase, it becomes difficult to answer all the questions in a timely manner. For our project, we wanted to focus on a few specific issues related to Piazza at scale. The authors are instructors for undergraduate courses at UofM - these course have roughly 400 and 600 students and only a handful of staff members to manage the class. We are interested in solving these problems to assists in our courses. We want to free up instructor's time so they don't have to spend all of their time answer questions on Piazza, and provide a better experience for students.
@@ -71,7 +77,6 @@ Finding duplicate questions is a natural IR problem. We have to find the most si
 Finding the top questions for the week for the FAQ is a question where both traditional IR techniques come into play, and we can use specific information made available from the Piazza platform.
 
 Improve Piazza's search feature is directly an IR task. Piazza's search isn't very good at IR, and we want to make it better!
-
 
 \section{Background}
 
@@ -98,21 +103,14 @@ We took advantage of several python packages and libraries to make the developme
 Piazza does not provide an elegant or easy way to programmatically interact with its posts. To get the questions and answers on the site, we had to use an unofficial API. This API has been reversed engineered [*insert reference*] and most of the actions that one can perform on the piazza website can be done through the api. We started from this API, and then built our own abstraction on top of it that would read in posts and then store them in our whoosh on disk index. To speed up processing, testing, and to prevent Piazza from potentially rate limiting us, we also developed a feature to bulk download and store course data, which we could then treat as our "Piazza" input data for indexing and pre-processing purposes. We extracted several past semesters of the course EECS 281, and were able to use that as our training set.
 
 
-\subsection{Data Preprocessing and Indexing}
-First, we had to bulk download all of the data from Piazza. For each post on Piazza, we find all of the child posts (follow up questions to each question), and their child posts, and so on, until we have all of the posts related to an orignal question. We can then download each of these posts using the Piazza API, as described above. Then, we needed to preform some preprocessing on the posts, before they can be made searchable.
-
-We did several preprocessing steps. First, we removed all HTML paragraph tags from the post body, as these don't help determine any expressiveness in the querys. Next, we concatenated the title with the body together, and treating both of them as one document for convenience. 
-Then, in order to improve reliability and efficiency in similarity measure, we did following. For each document, we do the basic text cleaning: We first use regular expressions to get rid of symbols that are useless to the calculation. And then, transform each word to its lower case, after which we remove the stopword from the documents and applied Porter stemmer [Porter, Martin F. "Snowball: A language for stemming algorithms." (2001).] from nltk[Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.] package to further shrink the vocabulary size. The Porter stemmer should allow us to get more accurate results while simulatenously shrinking the index size.
-
 \subsection{Feature Extraction}
 The raw data that we get through the APIs aren't fully sufficient for the purposes of our bot. For instance, we require features such the \# of endorsements from students and the instructors separately since they help in improving the quality of results. We also define a feature 'activity score' of a post which looks at the number of updates made to a post, the number of student and instructors involved, and also the number of follow-ups in the post.
 
-
+\subsection{Data Preprocessing}
+The subject and body of the post in its raw form is HTML format. We remove all the irrelevant HTML tags from the post body. We concatenate the title with the body together to make it easier for searching purposes.For each document, we perform some basic text cleaning by removing special characters through regex and also convert all text to lowercase.We also remove the stopwords from documents and apply Porter stemmer [Porter, Martin F. "Snowball: A language for stemming algorithms." (2001).] from nltk[Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on Interactive presentation sessions. Association for Computational Linguistics, 2006: 69-72.] package to further shrink the vocabulary size. 
 
 \subsection{Duplicate Detection}
 We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
-
-After the documents are cleaned and stemmed following the Data Preprocessing steps described above, we split the text by space in order to built the vector space model. 
 
 By representing the text document using vector space model, we can calculate relevance between the documents. Before that, for the term selection, we calculated the TF* IDF(term frequency–inverse document frequency) score for each words in documents by using sklearn built-in function. And then calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
 
