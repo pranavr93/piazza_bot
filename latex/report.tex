@@ -53,7 +53,7 @@ In this work, we explore some of the challenges faced with Piazza, specifically 
 \section{Introduction}
 
 \subsection{Piazza}
-Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Students can ask questions, which fellow students and instructors can attempt to answer. Students can post questions, answers, and notes, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course. Piazza provide students participation report which help instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around. Leading campuses across North America have a significant Piazza presence, especially for computer science courses. Larger courses typically have over 500 students actively using Piazza to assist with their coursework.
+Piazza is a free online gathering place where students can ask and answer questions 24/7 under the guidance of their instructors. Collaboration occurs in real time, which encourages participation and fuels discussion. Students can ask questions, which fellow students and instructors can attempt to answer. Students can post questions, answers, and notes, publicly or anonymously. Instructors can post notes, answer student questions, endorse good questions and answers, and collect student feedback about this course. Piazza provides students participation report which helps instructors to see students’ engagement in the class. Instructors can view the class report to see when in the term the most questions are being asked but not the other way around. Leading campuses across North America have a significant Piazza presence, especially for computer science courses. Larger courses typically have over 500 students actively using Piazza to assist with their coursework.
 
 \subsection{Chat Bots}
 A chat bot is a computer program which conducts conversational question answering  with users in a certain domain or on a certain topic with natural language sentence. Such procedure is aiming at simulating a person’s behavior as a conversation partner and designed to pass the Turing test. Chat bots are commonly used in various dialog system for information acquisition and other customer services. Some natural language processing techniques are used in building chat bots. There are various different levels at which chatbots attempt to simulate a human - some are little more than guided menus, while others incorporate deep learning and Artifical Intelligence to answer questions.
@@ -105,7 +105,7 @@ The subject and body of the post in its raw form is HTML format. We remove all t
 \subsection{Duplicate Detection}
 We implemented a function called find\_top\_N\_similar\_docs(), which achieve following functionality: input a new post, and a collection of existing posts, and a integer n, we can return the top n posts with highest similarity scores against new input post. 
 
-By representing the text document using vector space model, we can calculate relevance between the documents. We calculate the TF*IDF (term frequency–inverse document frequency) score for each word in the documents by using sklearn's built-in function. Then, we calculate the similarity between new posted documents with all documents in the whole collection. The posts on piazza usually are more than 5 words long, and we consider the document not short yet not too long. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
+By representing the text document using vector space model, we can calculate relevance between the documents. We calculate the TF*IDF (term frequency–inverse document frequency) score for each word in the documents by using sklearn's built-in function. Then, we calculate the similarity between new posted documents with all documents in the whole collection. We have a variety of methods to use to calculate similarity. We could use cosine, dice, or jaccard similarity socres. Jaccard similarity scores normally work well on shortter documents (shorter than the average Piazza post), so we dedcided not to use that \cite{tamingtext}. In this case, Cosine similarity measure or Dice similarity measure would be more efficient since these measures tend not to over penalize non-overlapping terms. In our implementation, we used Cosine similarity measure for reliability. By comparing pair-wise similarity scores of new input post and all posts in the collections  with input parameters N, we can return top N most similar documents with highest scores in the collections. 
 
 \subsection{Weekly FAQ}
 Every week on a Sunday, Jarvis makes an attempt to post the top 10 questions that could be relevant for every student in the course. To do this, Jarvis retrieves all the posts made one week prior to that Sunday from the whoosh index. Posts that do not contain an instructor answer are filtered out since they would not be of much use. With the remaining posts, Jarvis looks at various features of the posts and scores them. The key features that contribute to the score are :
@@ -134,7 +134,7 @@ A recency based search has the issue of having important posts go down the searc
 
 \section{Results}
 Here we present the results of our system.
-To test our system, we set up a mock Piazza course where we could post fake questions to Jarvis. Jarvis has read only access to previous semesters of questions, and read/write access on the mock course. When new questions are posted, Jarvis can read those questions, and write answers to them, but it cannot write to the past semesters course. We didn't want Jarvis answering real student questions quite yet.
+To test our system, we set up a mock Piazza course where we could post fake questions to Jarvis. Jarvis has read only access to previous semesters of questions, and read/write access on the mock course. When new questions are posted, Jarvis can read those questions, and write answers to them, but it cannot write to the past semesters course. We didn't want Jarvis answering real student questions quite yet.	
 
 \subsection{Duplicate Detection}
 To test our system, we found all questions in previous semesters that had been marked with an '@'. This means that an instructor read the question, and decided that it was similar enough to a previous question, that, instead of answering it, they decided to simply link to a previous question. We used this set of questions to test our system. We found that our system performed very well on this data set, responding to more than 90 percent of known duplicate posts correctly.
@@ -210,6 +210,11 @@ Bird S. NLTK: the natural language toolkit[C]//Proceedings of the COLING/ACL on 
 \bibitem{sklearn} 
 \textit{scikit-learn - Machine Learning in Python} 
 \\\texttt{http://scikit-learn.org/stable/}
+
+
+\bibitem{tamingtext} 
+\textit{rxnlp - Remedies for Taming Text} 
+\\\texttt{http://www.rxnlp.com/api-reference/text-similarity-api-reference/}
 
 
 \end{thebibliography}
